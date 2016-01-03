@@ -1,3 +1,4 @@
 .DS_Store
 /contents/*
 !/contents/1-hello-world.md
+deploy

@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title><?=$title?> - The blog of Iskandar Soesman</title>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title><?=$title?> - <?=CONF['blogSubTitle']?></title>
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 <link rel="stylesheet" href="/assets/blog/blog.css">
 </head>
@@ -18,21 +21,25 @@
 </div>
 <div class="container">
     <div class="blog-header">
-        <h2 class="blog-title h1">Less talk, more code</h2>
-        <p class="lead blog-description">The blog of Iskandar Soesman</p>
+        <h2 class="blog-title h1"><?=CONF['blogTitle']?></h2>
+        <p class="lead blog-description"><?=CONF['blogSubTitle']?></p>
     </div>
     <div class="row">
         <div class="col-sm-8 blog-main">
-            <?php include $templateFolder.$content.'.php'?>
+            <?php $template($section)?>
         </div>
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
             <div class="sidebar-module sidebar-module-inset">
-                <h4>About</h4>
-                <p>Speak: PHP, Node and Go. Build: <a href="https://twitter.com/panadaframework">@panadaframework</a> and <a href="https://twitter.com/soebizhq">@soebizhq</a>, a free e commerce site provider (<a href="https://soebiz.com">https://soebiz.com</a> ). Full time Software engineer <a href="https://twitter.com/detikcom">@detikcom</a></p>
+                <h4>About Iskandar Soesman</h4>
+                <p>I Speak: PHP, Node and Go. I build: <a href="https://twitter.com/panadaframework">Panadaframework</a> and <a href="https://soebiz.com">Soebiz</a>, a free e commerce site provider. I also full time Software engineer <a href="http://www.detik.com">@detikcom</a></p>
             </div>
-            <?php if($content == 'post'):?>
-            <?php include $templateFolder.'widget.php'?>
+            <?php if($section == 'post'):?>
+            <?php $template('widget')?>
             <?php endif?>
+            <div class="sidebar-module sidebar-module-inset">
+                <h4>Download this blog app</h4>
+                <p>This blog app is open source project written in PHP and use markdown file base as the data store. Get it here <a href="https://github.com/ikandars/gia">https://github.com/ikandars/gia</a></p>
+            </div>
         </div><!-- /.blog-sidebar -->
     </div><!-- /.row -->
 </div><!-- /.container -->

@@ -1,4 +1,4 @@
 <div class="blog-post">
-    <?=$md?>
-    <p class="blog-post-meta">last modified: <?=$date?></p>
+    <?=$post['html']?>
+    <p class="blog-post-meta">last modified: <?=$post['lastModified']?></p>
 </div>
