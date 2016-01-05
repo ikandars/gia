@@ -5,7 +5,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><?=$title?> - <?=CONF['blogSubTitle']?></title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/default.min.css">
 <link rel="stylesheet" href="/assets/blog/blog.css">
 </head>
 <body>
@@ -26,7 +27,7 @@
     </div>
     <div class="row">
         <div class="col-sm-8 blog-main">
-            <?php $template($section)?>
+            <?=$template($section, $vars)['body']?>
         </div>
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
             <div class="sidebar-module sidebar-module-inset">
@@ -34,7 +35,7 @@
                 <p>I Speak: PHP, Node and Go. I build: <a href="https://twitter.com/panadaframework">Panadaframework</a> and <a href="https://soebiz.com">Soebiz</a>, a free e commerce site provider. I also full time Software engineer <a href="http://www.detik.com">@detikcom</a></p>
             </div>
             <?php if($section == 'post'):?>
-            <?php $template('widget')?>
+            <?=$template('widget', $vars)['body']?>
             <?php endif?>
             <div class="sidebar-module sidebar-module-inset">
                 <h4>Download this blog app</h4>
@@ -49,5 +50,7 @@
     <a href="#">Back to top</a>
   </p>
 </footer>
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
 </body>
 </html>

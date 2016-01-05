@@ -14,7 +14,7 @@ require '../vendor/erusev/parsedown/Parsedown.php';
 $parsedown = new Parsedown();
 $doc = new DOMDocument();
 
-$mdFiles = function() {
+$getMDFiles = function() {
     
     $resource = new FilesystemIterator(CONF['contentPath']);
     $resource = new RegexIterator($resource,'/^.+\.md/i');
@@ -31,8 +31,6 @@ $mdFiles = function() {
     
     return $files;
 };
-
-$uri = explode('/', trim(strtok($_SERVER['REQUEST_URI'], '?'), '/'));
 
 $getTagContent = function($html, array $tags) use ($doc) {
     
@@ -51,13 +49,16 @@ $getTagContent = function($html, array $tags) use ($doc) {
     return $return;
 };
 
-$getContent = function($filePath) use ($parsedown, $getTagContent) {
+$getContent = function($filePath, $html = false) use ($parsedown, $getTagContent) {
     
     $id         = explode('-', $filePath)[0];
     $filePath   = str_replace('.md', '', $filePath).'.md';
     $filePath   = CONF['contentPath'].'/'.$filePath;
     
-    $html       = file_get_contents($filePath);
+    if(!$html) {
+        $html   = file_get_contents($filePath);
+    }
+    
     $html       = $parsedown->text($html);
     $date       = date ('F d Y H:i:s', filemtime($filePath));
     
@@ -81,58 +82,75 @@ $postList = function ($files) use ($getContent) {
     }
 };
 
-$template = function($file) use (&$vars, &$template) {
+$template = function($file, &$vars, $header = 'HTTP/1.1 200 OK') use (&$template) {
     
     extract($vars, EXTR_SKIP);
     
+    ob_start();
+    
     require CONF['templatePath'].$file.'.php';
+    
+    return ['body' => ob_get_clean(), 'header' => $header];
 };
 
-// route to admin page
-if($uri[0] == 'admin') {
+$route = function($map, $uri) use ($template) {
     
-}
-
-// route to detail page
-elseif($uri[0] && $uri[0] != 'page') {
+    $path   = strtok($uri, '?');
+    $uri    = array_replace(['page', 1], explode('/', trim($path, '/')));
     
-    $filePath = CONF['contentPath'].'/'.$uri[0].'.md';
-    
-    if(! $md = @file_get_contents($filePath)) {
-        header('HTTP/1.0 404 Not Found');
-        require CONF['templatePath'].'404.php';
-        exit;
+    foreach($map as $pattern => $callBack) {
+        if(preg_match($pattern, $path)) {
+            return call_user_func_array($callBack, $uri);
+        }
     }
     
-    $files  = array_slice($mdFiles(), 0, 10);
-    $post   = $getContent($uri[0]);
-    
-    $vars = [
-        'section' => 'post',
-        'title' => $post['title'],
-        'posts' => $postList($files),
-        'post' => $post,
-        'template' => $template
-    ];
-    
-    $template('layout');
-}
+    $vars = [];
+    return $template('404', $vars, 'HTTP/1.1 404 Not Found');;
+};
 
-// route to content list page
-else {
-    $limit  = 10;
-    $page   = ($uri[0] == 'page' && isset($uri[1]) && $uri[1] > 0)? $uri[1]:1;
+$map = [
+    '/(^\/$)|(^\/page)/' => function($path, $page) use ($getMDFiles, $postList, $template) {
     
-    $offset = ($limit * $page) - $limit;
-    $files  = array_slice($mdFiles(), $offset, $limit);
+        $limit  = 10;
+        $offset = ($limit * $page) - $limit;
+        $files  = array_slice($getMDFiles(), $offset, $limit);
+        
+        $vars = [
+            'section' => 'home',
+            'title' => 'Less talk, more code',
+            'posts' => $postList($files),
+            'olderPage' => $page + 1,
+            'newerPage' => $page - 1,
+        ];
+        
+        return $template('layout', $vars);
+    },
     
-    $vars = [
-        'section' => 'home',
-        'title' => 'Less talk, more code',
-        'posts' => $postList($files),
-        'olderPage' => $page + 1,
-        'newerPage' => $page - 1,
-    ];
+    '/^\/[0-9]+\-[\/A-Za-z0-9\-]/' => function($slug) use ($getMDFiles, $getContent, $postList, $template) {
     
-    $template('layout');
-}
+        $filePath = CONF['contentPath'].'/'.$slug.'.md';
+        
+        if(! $md = @file_get_contents($filePath)) {
+            $vars = [];
+            return $template('404', $vars, 'HTTP/1.1 404 Not Found');
+        }
+        
+        $files  = array_slice($getMDFiles(), 0, 10);
+        $post   = $getContent($slug, $md);
+        
+        $vars = [
+            'section' => 'post',
+            'title' => $post['title'],
+            'posts' => $postList($files),
+            'post' => $post,
+            'template' => $template
+        ];
+        
+        return $template('layout', $vars);
+    }
+];
+
+$output = $route($map, $_SERVER['REQUEST_URI']);
+
+header($output['header']);
+echo $output['body'];
