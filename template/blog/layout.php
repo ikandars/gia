@@ -8,6 +8,14 @@
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css">
 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.0.0/styles/default.min.css">
 <link rel="stylesheet" href="/assets/blog/blog.css">
+<script>
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-21389616-2', 'auto');
+ga('send', 'pageview');
+</script>
 </head>
 <body>
 <div class="blog-masthead">
@@ -32,7 +40,7 @@
         <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
             <div class="sidebar-module sidebar-module-inset">
                 <h4>About Iskandar Soesman</h4>
-                <p>I Speak: PHP, Node and Go. I build: <a href="https://twitter.com/panadaframework">Panadaframework</a> and <a href="https://soebiz.com">Soebiz</a>, a free e commerce site provider. I also full time Software engineer <a href="http://www.detik.com">@detikcom</a></p>
+                <p>I Speak: PHP, Node, Python and Go. I build: <a href="https://twitter.com/panadaframework">Panadaframework</a> and <a href="https://awan.io">Awan.io</a>, an applications platform provider.</p>
             </div>
             <?php if($section == 'post'):?>
             <?=$template('widget', $vars)['body']?>
